@@ -244,6 +244,7 @@ Rails.application.routes.draw do
       post :start
     end
     get :print_unfulfilled, on: :collection
+    get :print_all, on: :collection
     get :print_picklist, on: :member
   end
   resources :requests, except: %i(destroy) do

@@ -77,6 +77,27 @@ class RequestsController < ApplicationController
     end
   end
 
+  def print_all
+    setup_date_range_picker
+
+    requests = current_organization
+      .ordered_requests
+      .undiscarded
+      .during(helpers.selected_range)
+      .class_filter(filter_params)
+      .includes(:item_requests, partner: [:profile])
+
+    respond_to do |format|
+      format.any do
+        pdf = PicklistsPdf.new(current_organization, requests)
+        send_data pdf.compute_and_render,
+          filename: format("Picklists_Filtered_%s.pdf", Time.current.to_fs(:long)),
+          type: "application/pdf",
+          disposition: "inline"
+      end
+    end
+  end
+
   private
 
   def load_items
